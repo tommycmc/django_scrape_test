@@ -24,14 +24,14 @@ class Author(models.Model):
 
 class Article(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    url = models.CharField(max_length=100, unique=True, null=False, blank=False)
+    url = models.CharField(max_length=500, unique=True, null=False, blank=False)
     title = models.TextField(null=False, blank=False)
     created_time = models.DateTimeField()
     site = models.CharField(max_length=2, choices=ArticleSite.SITES_OPTIONS)
 
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
 
-    author = models.OneToOneField(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.title} ({ArticleSite.SITE_OPTIONS_DICT[self.site]})'
@@ -41,4 +41,3 @@ class Article(models.Model):
         indexes = [
             models.Index(name=f'site_index_{article_site}', fields=['site'], condition=Q(site=article_site)) for article_site in ArticleSite.SITE_OPTIONS_DICT.keys()
         ]
-
